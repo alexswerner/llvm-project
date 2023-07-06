@@ -379,6 +379,7 @@ protected:
     int_type underflow() override;
     int_type pbackfail(int_type __c = traits_type::eof()) override;
     int_type overflow (int_type __c = traits_type::eof()) override;
+    basic_stringbuf* setbuf(char_type* __s, streamsize __n) override;
     pos_type seekoff(off_type __off, ios_base::seekdir __way,
                      ios_base::openmode __wch = ios_base::in | ios_base::out) override;
     _LIBCPP_HIDE_FROM_ABI_VIRTUAL
@@ -700,6 +701,19 @@ basic_stringbuf<_CharT, _Traits, _Allocator>::overflow(int_type __c)
         return this->sputc(traits_type::to_char_type(__c));
     }
     return traits_type::not_eof(__c);
+}
+
+template <class _CharT, class _Traits, class _Allocator>
+basic_stringbuf<_CharT, _Traits, _Allocator>*
+basic_stringbuf<_CharT, _Traits, _Allocator>::setbuf(char_type* __s,
+                                                     streamsize __n)
+{
+    if (__s && __n >= 0)
+    {
+        setg(__s, __s, __s + __n);
+        setp(__s, __s + __n);
+    }
+    return this;
 }
 
 template <class _CharT, class _Traits, class _Allocator>
